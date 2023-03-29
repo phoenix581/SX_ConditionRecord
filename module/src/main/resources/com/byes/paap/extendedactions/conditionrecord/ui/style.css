@@ -1,0 +1,27 @@
+.appPanel {
+    position: absolute;
+}
+
+#exampleForm {
+    height: 100%;
+ }
+
+.gridPanel {
+    padding: 16px;
+}
+
+.feedbackMessage {
+    min-height: 190px;
+    padding: 16px;
+}
+
+.content {
+    height: calc(100% - 86px);
+    overflow-y: scroll;
+}
+
+.bottom {
+    background-color: var(--pn-theme-internal_50);
+    display: inline-block;
+    width: 100%;
+}

@@ -1,0 +1,22 @@
+<wicket:panel>
+    <div class="appPanel PlanonWebBaseDialog PnWebBaseDialog PnWebBasicReportExecutionDialog" style="height: 100%; width: 100%;">   
+        <div class="modalwindow">
+            <div class="dialogContentPanel" style="height: 100%;">   
+                <form wicket:id="exampleForm" id="exampleForm">
+                <div class="content">                    
+                    <div class="gridPanel">
+                        <select wicket:id="conditionRecordTemplates"></select>
+                    </div>
+                    <div wicket:id="feedbackMessage" class="feedbackMessage"></div>
+                </div>
+                <div class="bottom">
+                    <div class="baseButtonPanel">
+                        <input type="button" wicket:id="saveButton" class="btn btn-primary" value="OK" title="OK" />
+                        <input type="button" wicket:id="cancelButton" class="btn btn-secondary" value="Cancel" />
+                    </div> 
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</wicket:panel>

@@ -1,0 +1,15 @@
+{
+  "type" : "server",
+  "description" : "",
+  "dependencies" : [ {
+    "group" : "org.slf4j",
+    "name" : "slf4j-api",
+    "version" : "1.7.25"
+  }, {
+    "group" : "org.danekja",
+    "name" : "jdk-serializable-functional",
+    "version" : "1.8.6"
+  } ],
+  "testDependencies" : [ ],
+  "integrationTestDependencies" : [ ]
+}

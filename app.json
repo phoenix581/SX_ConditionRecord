@@ -1,0 +1,10 @@
+{
+  "appUUID" : "71BA486F-F0F3-48D1-965A-E53CF2C2FA28",
+  "partnerIdentifier" : "bouygues.apps",
+  "name" : "sxconditionrecord",
+  "version" : "1.0.0",
+  "release" : "87.0.0.20-5",
+  "repositories" : [ {
+    "url" : "https://repo1.maven.org/maven2/"
+  } ]
+}
