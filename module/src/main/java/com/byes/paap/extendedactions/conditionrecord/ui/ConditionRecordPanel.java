@@ -63,6 +63,9 @@ public class ConditionRecordPanel extends Panel
 	public transient static IDatabaseQuery travelTermsQuery = null;
 	public transient static IResultSet travelTermsQueryResults = null;
 
+	public transient static IDatabaseQuery travelTermMethodQuery = null;
+	public transient static IResultSet travelTermMethodQueryResults = null;
+
 	public transient static IDatabaseQuery tradeQuery = null;
     public transient static IResultSet tradeQueryResults = null;
     
@@ -102,6 +105,9 @@ public class ConditionRecordPanel extends Panel
             @Override
             protected void onSubmit(final AjaxRequestTarget target) {
                 try {
+                    
+                    ModalWindow.closeCurrent(target); 
+
                     IBusinessObject template = aTSIActionContext.getDataService().getActionListManager("UsrConditionRecordTemplate").executeRead(Integer.valueOf(conditionRecordModel.getObject().getCode()));
 
                     IBusinessObject newCR = createUsrConditionRecord(aTSIActionContext, template, customerPrimaryKey, buildingName);
@@ -175,6 +181,15 @@ public class ConditionRecordPanel extends Panel
                                 IBusinessObject newTravelTerms = createTravelTerms(aTSIActionContext, travelTerms, newBaseServiceAgreement.getReferenceField("PivotLifecycleRef").getValue());
                                 ConditionRecordPanel.travelTermsQueryResults.next();
                             }
+                            ConditionRecordPanel.travelTermMethodQuery = aTSIActionContext.getDataService().getPVDatabaseQuery("TravelTermMethodQuery");
+                            ConditionRecordPanel.travelTermMethodQuery.setPageSize(1000);
+                            ConditionRecordPanel.travelTermMethodQuery.getSearchExpression("ServiceAgreementRef", Operator.EQUAL).setValue(baseServiceAgreement.getPrimaryKey());
+                            ConditionRecordPanel.travelTermMethodQueryResults = ConditionRecordPanel.travelTermMethodQuery.execute();
+                            while (ConditionRecordPanel.travelTermMethodQueryResults.next()) {
+                                IBusinessObject travelTermMethod = aTSIActionContext.getDataService().getActionListManager("TravelTerms").executeRead(ConditionRecordPanel.travelTermMethodQueryResults.getPrimaryKey());
+                                IBusinessObject newTravelTermMethod = createTravelTerms(aTSIActionContext, travelTermMethod, newBaseServiceAgreement.getReferenceField("PivotLifecycleRef").getValue());
+                                ConditionRecordPanel.travelTermMethodQueryResults.next();
+                            }
                             ConditionRecordPanel.baseServiceAgreementQueryResults.next();
                         }
                         ConditionRecordPanel.queryResults.next();
@@ -184,7 +199,7 @@ public class ConditionRecordPanel extends Panel
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                ModalWindow.closeCurrent(target);                
+                               
             }
         };
 
@@ -568,5 +583,42 @@ public class ConditionRecordPanel extends Panel
         newTravelTerms.executeSave();
 
         return newTravelTerms;
+     }
+     
+     public IBusinessObject createTravelTermMethod(ITSIActionContext aTSIActionContext, IBusinessObject template, int primaryKey) throws ActionNotFoundException, BusinessException, FieldNotFoundException, ParseException {
+        IBusinessObject newTravelTermMethod = aTSIActionContext.getDataService().getActionListManager("TravelTermMethod").getAction("BomAdd").execute();
+        
+        int numberOfFields= template.getBODefinition().getNumberOfFieldDefinitions();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+
+        String dateInString = "01.01.2010";
+        Date date = formatter.parse(dateInString);
+        for (int i = 0; i < numberOfFields; i++) {
+            if (template.getBODefinition().getFieldDefinition(i).isInUse() && !template.getBODefinition().getFieldDefinition(i).isReadOnly()) {
+                String systemName = template.getBODefinition().getFieldDefinition(i).getPnName();
+                if ("RefBOStateUserDefined".equals(systemName) || "SystemState".equals(systemName) || "Code".equals(systemName) ||
+                    "PivotLifecycleRef".equals(systemName) || "PreviousLifecycleRef".equals(systemName)) {
+                    continue;
+                }
+                if ("Name".equals(systemName)) {
+                    newTravelTermMethod.getField(systemName).setValue(template.getStringField("Name").getValue());
+                    continue;
+                }
+
+                if ("ActualBeginDate".equals(systemName) || "PlanonBeginDate".equals(systemName) || "BeginDate".equals(systemName)) {
+                    newTravelTermMethod.getDateField(systemName).setValue(date);
+                    continue;
+                }
+                if ("ServiceAgreementRef".equals(systemName)) {
+                    newTravelTermMethod.getField(systemName).setValue(primaryKey);
+                    continue;
+                }
+                newTravelTermMethod.getField(systemName).setValue(template.getField(systemName).getValue());
+            }
+        }
+
+        newTravelTermMethod.executeSave();
+
+        return newTravelTermMethod;
 	 }
 }
