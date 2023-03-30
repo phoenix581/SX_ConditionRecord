@@ -9,7 +9,7 @@ public class GeneralTermsQuery implements IQueryDefinition
     @Override
 	public void create(IQueryBuilder aBuilder, IQueryDefinitionContext aContext) {
         aBuilder.addSelectField("Syscode");
-        aBuilder.addSearchField("ContractRef");
+        aBuilder.addSearchField("ContractlineRef");
 	}
 
 	@Override

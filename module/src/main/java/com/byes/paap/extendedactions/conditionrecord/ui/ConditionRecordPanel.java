@@ -114,55 +114,70 @@ public class ConditionRecordPanel extends Panel
                         IBusinessObject conditionRecordLine = aTSIActionContext.getDataService().getActionListManager("UsrSLAAmount").executeRead(ConditionRecordPanel.queryResults.getPrimaryKey());
                         IBusinessObject newConditionRecordLine = createUsrSLAAmount(aTSIActionContext, conditionRecordLine, newCRKey, buildingPrimaryKey);
                         ConditionRecordPanel.baseServiceAgreementQuery = aTSIActionContext.getDataService().getPVDatabaseQuery("ContractLineServiceAgreementQuery");
+                        ConditionRecordPanel.baseServiceAgreementQuery.setPageSize(1000);
                         ConditionRecordPanel.baseServiceAgreementQuery.getSearchExpression("ContractLineRef", Operator.EQUAL).setValue(conditionRecordLine.getPrimaryKey());
                         ConditionRecordPanel.baseServiceAgreementQueryResults = ConditionRecordPanel.baseServiceAgreementQuery.execute();
 
                         while (ConditionRecordPanel.baseServiceAgreementQueryResults.next()) {
                             IBusinessObject baseServiceAgreement = aTSIActionContext.getDataService().getActionListManager("ContractLineServiceAgreement").executeRead(ConditionRecordPanel.baseServiceAgreementQueryResults.getPrimaryKey());
-                            IBusinessObject newBaseServiceAgreement = createBaseServiceAgreement(aTSIActionContext, baseServiceAgreement, newConditionRecordLine.getPrimaryKey());
+                            IBusinessObject newBaseServiceAgreement = createBaseServiceAgreement(aTSIActionContext, baseServiceAgreement, newConditionRecordLine.getReferenceField("PivotLifecycleRef").getValue());
                             ConditionRecordPanel.generalTermsQuery = aTSIActionContext.getDataService().getPVDatabaseQuery("GeneralTermsQuery");
-                            ConditionRecordPanel.generalTermsQuery.getSearchExpression("ContractLineRef", Operator.EQUAL).setValue(conditionRecordLine.getPrimaryKey());
+                            ConditionRecordPanel.generalTermsQuery.setPageSize(1000);
+                            ConditionRecordPanel.generalTermsQuery.getSearchExpression("ContractlineRef", Operator.EQUAL).setValue(conditionRecordLine.getPrimaryKey());
                             ConditionRecordPanel.generalTermsQueryResults = ConditionRecordPanel.generalTermsQuery.execute();
                             while (ConditionRecordPanel.generalTermsQueryResults.next()) {
                                 IBusinessObject generalTerms = aTSIActionContext.getDataService().getActionListManager("GeneralTerms").executeRead(ConditionRecordPanel.generalTermsQueryResults.getPrimaryKey());
-                                IBusinessObject newGeneralTerms = createGeneralTerms(aTSIActionContext, generalTerms, newConditionRecordLine.getPrimaryKey());
+                                IBusinessObject newGeneralTerms = createGeneralTerms(aTSIActionContext, generalTerms, newConditionRecordLine.getReferenceField("PivotLifecycleRef").getValue());
+                                ConditionRecordPanel.generalTermsQueryResults.next();
                             }
                             ConditionRecordPanel.timeTermsQuery = aTSIActionContext.getDataService().getPVDatabaseQuery("TimeTermsQuery");
+                            ConditionRecordPanel.timeTermsQuery.setPageSize(1000);
                             ConditionRecordPanel.timeTermsQuery.getSearchExpression("ServiceAgreementRef", Operator.EQUAL).setValue(baseServiceAgreement.getPrimaryKey());
-                            ConditionRecordPanel.timeTermsQueryResults = ConditionRecordPanel.generalTermsQuery.execute();
+                            ConditionRecordPanel.timeTermsQueryResults = ConditionRecordPanel.timeTermsQuery.execute();
                             while (ConditionRecordPanel.timeTermsQueryResults.next()) {
                                 IBusinessObject timeTerms = aTSIActionContext.getDataService().getActionListManager("TimeTerms").executeRead(ConditionRecordPanel.timeTermsQueryResults.getPrimaryKey());
-                                IBusinessObject newTimeTerms = createTimeTerms(aTSIActionContext, timeTerms, newBaseServiceAgreement.getPrimaryKey());
+                                IBusinessObject newTimeTerms = createTimeTerms(aTSIActionContext, timeTerms, newBaseServiceAgreement.getReferenceField("PivotLifecycleRef").getValue());
+                                ConditionRecordPanel.timeTermsQueryResults.next();
                             }
                             ConditionRecordPanel.manHourTermsQuery = aTSIActionContext.getDataService().getPVDatabaseQuery("ManHourTermsQuery");
+                            ConditionRecordPanel.manHourTermsQuery.setPageSize(1000);
                             ConditionRecordPanel.manHourTermsQuery.getSearchExpression("ServiceAgreementRef", Operator.EQUAL).setValue(baseServiceAgreement.getPrimaryKey());
                             ConditionRecordPanel.manHourTermsQueryResults = ConditionRecordPanel.manHourTermsQuery.execute();
                             while (ConditionRecordPanel.manHourTermsQueryResults.next()) {
                                 IBusinessObject manHourTerms = aTSIActionContext.getDataService().getActionListManager("ManHourTerms").executeRead(ConditionRecordPanel.manHourTermsQueryResults.getPrimaryKey());
-                                IBusinessObject newManHourTerms = createManHourTerms(aTSIActionContext, manHourTerms, newBaseServiceAgreement.getPrimaryKey());
+                                IBusinessObject newManHourTerms = createManHourTerms(aTSIActionContext, manHourTerms, newBaseServiceAgreement.getReferenceField("PivotLifecycleRef").getValue());
+                                ConditionRecordPanel.manHourTermsQueryResults.next();
                             }
                             ConditionRecordPanel.subContractorTermsQuery = aTSIActionContext.getDataService().getPVDatabaseQuery("SubContractorTermsQuery");
+                            ConditionRecordPanel.subContractorTermsQuery.setPageSize(1000);
                             ConditionRecordPanel.subContractorTermsQuery.getSearchExpression("ServiceAgreementRef", Operator.EQUAL).setValue(baseServiceAgreement.getPrimaryKey());
                             ConditionRecordPanel.subContractorTermsQueryResults = ConditionRecordPanel.subContractorTermsQuery.execute();
                             while (ConditionRecordPanel.subContractorTermsQueryResults.next()) {
                                 IBusinessObject subContractorTerms = aTSIActionContext.getDataService().getActionListManager("SubContractorTerms").executeRead(ConditionRecordPanel.subContractorTermsQueryResults.getPrimaryKey());
-                                IBusinessObject newSubContractorTerms = createManHourTerms(aTSIActionContext, subContractorTerms, newBaseServiceAgreement.getPrimaryKey());
+                                IBusinessObject newSubContractorTerms = createSubContractorTerms(aTSIActionContext, subContractorTerms, newBaseServiceAgreement.getReferenceField("PivotLifecycleRef").getValue());
+                                ConditionRecordPanel.subContractorTermsQueryResults.next();
                             }
                             ConditionRecordPanel.materialTermsQuery = aTSIActionContext.getDataService().getPVDatabaseQuery("MaterialTermsQuery");
+                            ConditionRecordPanel.materialTermsQuery.setPageSize(1000);
                             ConditionRecordPanel.materialTermsQuery.getSearchExpression("ServiceAgreementRef", Operator.EQUAL).setValue(baseServiceAgreement.getPrimaryKey());
                             ConditionRecordPanel.materialTermsQueryResults = ConditionRecordPanel.materialTermsQuery.execute();
                             while (ConditionRecordPanel.materialTermsQueryResults.next()) {
                                 IBusinessObject materialTerms = aTSIActionContext.getDataService().getActionListManager("MaterialTerms").executeRead(ConditionRecordPanel.materialTermsQueryResults.getPrimaryKey());
-                                IBusinessObject newMaterialTerms = createManHourTerms(aTSIActionContext, materialTerms, newBaseServiceAgreement.getPrimaryKey());
+                                IBusinessObject newMaterialTerms = createMaterialTerms(aTSIActionContext, materialTerms, newBaseServiceAgreement.getReferenceField("PivotLifecycleRef").getValue());
+                                ConditionRecordPanel.materialTermsQueryResults.next();
                             }
                             ConditionRecordPanel.travelTermsQuery = aTSIActionContext.getDataService().getPVDatabaseQuery("TravelTermsQuery");
+                            ConditionRecordPanel.travelTermsQuery.setPageSize(1000);
                             ConditionRecordPanel.travelTermsQuery.getSearchExpression("ServiceAgreementRef", Operator.EQUAL).setValue(baseServiceAgreement.getPrimaryKey());
                             ConditionRecordPanel.travelTermsQueryResults = ConditionRecordPanel.travelTermsQuery.execute();
                             while (ConditionRecordPanel.travelTermsQueryResults.next()) {
                                 IBusinessObject travelTerms = aTSIActionContext.getDataService().getActionListManager("TravelTerms").executeRead(ConditionRecordPanel.travelTermsQueryResults.getPrimaryKey());
-                                IBusinessObject newTravelTerms = createManHourTerms(aTSIActionContext, travelTerms, newBaseServiceAgreement.getPrimaryKey());
+                                IBusinessObject newTravelTerms = createTravelTerms(aTSIActionContext, travelTerms, newBaseServiceAgreement.getReferenceField("PivotLifecycleRef").getValue());
+                                ConditionRecordPanel.travelTermsQueryResults.next();
                             }
+                            ConditionRecordPanel.baseServiceAgreementQueryResults.next();
                         }
+                        ConditionRecordPanel.queryResults.next();
                     }
 
                 } catch (NumberFormatException | ActionNotFoundException | BusinessException | FieldNotFoundException | ParseException e) {
@@ -296,7 +311,8 @@ public class ConditionRecordPanel extends Panel
         for (int i = 0; i < numberOfFields; i++) {
             if (template.getBODefinition().getFieldDefinition(i).isInUse() && !template.getBODefinition().getFieldDefinition(i).isReadOnly()) {
                 String systemName = template.getBODefinition().getFieldDefinition(i).getPnName();
-                if ("RefBOStateUserDefined".equals(systemName) || "SystemState".equals(systemName) || "Code".equals(systemName)) {
+                if ("RefBOStateUserDefined".equals(systemName) || "SystemState".equals(systemName) || "Code".equals(systemName) ||
+                    "PivotLifecycleRef".equals(systemName) || "PreviousLifecycleRef".equals(systemName)) {
                     continue;
                 }
                 if ("Name".equals(systemName)) {
@@ -309,7 +325,7 @@ public class ConditionRecordPanel extends Panel
                     continue;
                 }
                 if ("ContractLineRef".equals(systemName)) {
-                    newConditionRecordLineBO.getField(systemName).setValue(primaryKey-1);
+                    newConditionRecordLineBO.getField(systemName).setValue(primaryKey);
                     continue;
                 }
                 newConditionRecordLineBO.getField(systemName).setValue(template.getField(systemName).getValue());
@@ -332,7 +348,8 @@ public class ConditionRecordPanel extends Panel
         for (int i = 0; i < numberOfFields; i++) {
             if (template.getBODefinition().getFieldDefinition(i).isInUse() && !template.getBODefinition().getFieldDefinition(i).isReadOnly()) {
                 String systemName = template.getBODefinition().getFieldDefinition(i).getPnName();
-                if ("RefBOStateUserDefined".equals(systemName) || "SystemState".equals(systemName) || "Code".equals(systemName)) {
+                if ("RefBOStateUserDefined".equals(systemName) || "SystemState".equals(systemName) || "Code".equals(systemName) ||
+                    "PivotLifecycleRef".equals(systemName) || "PreviousLifecycleRef".equals(systemName)) {
                     continue;
                 }
                 if ("Name".equals(systemName)) {
@@ -345,7 +362,7 @@ public class ConditionRecordPanel extends Panel
                     continue;
                 }
                 if ("ContractlineRef".equals(systemName)) {
-                    newGeneralTermsBO.getField(systemName).setValue(primaryKey-1);
+                    newGeneralTermsBO.getField(systemName).setValue(primaryKey);
                     continue;
                 }
                 newGeneralTermsBO.getField(systemName).setValue(template.getField(systemName).getValue());
@@ -368,7 +385,8 @@ public class ConditionRecordPanel extends Panel
         for (int i = 0; i < numberOfFields; i++) {
             if (template.getBODefinition().getFieldDefinition(i).isInUse() && !template.getBODefinition().getFieldDefinition(i).isReadOnly()) {
                 String systemName = template.getBODefinition().getFieldDefinition(i).getPnName();
-                if ("RefBOStateUserDefined".equals(systemName) || "SystemState".equals(systemName) || "Code".equals(systemName)) {
+                if ("RefBOStateUserDefined".equals(systemName) || "SystemState".equals(systemName) || "Code".equals(systemName) ||
+                    "PivotLifecycleRef".equals(systemName) || "PreviousLifecycleRef".equals(systemName)) {
                     continue;
                 }
                 if ("Name".equals(systemName)) {
@@ -381,7 +399,7 @@ public class ConditionRecordPanel extends Panel
                     continue;
                 }
                 if ("ServiceAgreementRef".equals(systemName)) {
-                    newTimeTermsBO.getField(systemName).setValue(primaryKey-1);
+                    newTimeTermsBO.getField(systemName).setValue(primaryKey);
                     continue;
                 }
                 newTimeTermsBO.getField(systemName).setValue(template.getField(systemName).getValue());
@@ -404,7 +422,8 @@ public class ConditionRecordPanel extends Panel
         for (int i = 0; i < numberOfFields; i++) {
             if (template.getBODefinition().getFieldDefinition(i).isInUse() && !template.getBODefinition().getFieldDefinition(i).isReadOnly()) {
                 String systemName = template.getBODefinition().getFieldDefinition(i).getPnName();
-                if ("RefBOStateUserDefined".equals(systemName) || "SystemState".equals(systemName) || "Code".equals(systemName)) {
+                if ("RefBOStateUserDefined".equals(systemName) || "SystemState".equals(systemName) || "Code".equals(systemName) ||
+                    "PivotLifecycleRef".equals(systemName) || "PreviousLifecycleRef".equals(systemName)) {
                     continue;
                 }
                 if ("Name".equals(systemName)) {
@@ -417,7 +436,7 @@ public class ConditionRecordPanel extends Panel
                     continue;
                 }
                 if ("ServiceAgreementRef".equals(systemName)) {
-                    newManHourTerms.getField(systemName).setValue(primaryKey-1);
+                    newManHourTerms.getField(systemName).setValue(primaryKey);
                     continue;
                 }
                 newManHourTerms.getField(systemName).setValue(template.getField(systemName).getValue());
@@ -430,13 +449,13 @@ public class ConditionRecordPanel extends Panel
         ConditionRecordPanel.tradeQuery.getSearchExpression("ManHourTermRef", Operator.EQUAL).setValue(template.getPrimaryKey());
         ConditionRecordPanel.tradeQueryResults = ConditionRecordPanel.tradeQuery.execute();
         while (ConditionRecordPanel.tradeQueryResults.next()) {
-            IBusinessObject manHourTermMToNTrade = aTSIActionContext.getDataService().getActionListManager("ManHourTermMToNTrade").executeRead(ConditionRecordPanel.tradeQueryResults.getPrimaryKey());
-            manHourTermMToNTrade.getReferenceField("ManHourTermRef").setValue(newManHourTerms.getPrimaryKey());
+            IBusinessObject manHourTermMToNTrade = aTSIActionContext.getDataService().getActionListManager("ManHourTermMToNTrade").getAction("BomAdd").execute();
+            manHourTermMToNTrade.getReferenceField("ManHourTermRef").setValue(newManHourTerms.getPrimaryKey()-1);
             manHourTermMToNTrade.getReferenceField("TradeRef").setValue(ConditionRecordPanel.tradeQueryResults.getReference("TradeRef"));
             manHourTermMToNTrade.getDateField("BeginDate").setValue(date);
             manHourTermMToNTrade.executeSave();
         }
-
+        
         return newManHourTerms;
      }
      
@@ -451,7 +470,8 @@ public class ConditionRecordPanel extends Panel
         for (int i = 0; i < numberOfFields; i++) {
             if (template.getBODefinition().getFieldDefinition(i).isInUse() && !template.getBODefinition().getFieldDefinition(i).isReadOnly()) {
                 String systemName = template.getBODefinition().getFieldDefinition(i).getPnName();
-                if ("RefBOStateUserDefined".equals(systemName) || "SystemState".equals(systemName) || "Code".equals(systemName)) {
+                if ("RefBOStateUserDefined".equals(systemName) || "SystemState".equals(systemName) || "Code".equals(systemName) ||
+                    "PivotLifecycleRef".equals(systemName) || "PreviousLifecycleRef".equals(systemName)) {
                     continue;
                 }
                 if ("Name".equals(systemName)) {
@@ -464,7 +484,7 @@ public class ConditionRecordPanel extends Panel
                     continue;
                 }
                 if ("ServiceAgreementRef".equals(systemName)) {
-                    newSubContractorTerms.getField(systemName).setValue(primaryKey-1);
+                    newSubContractorTerms.getField(systemName).setValue(primaryKey);
                     continue;
                 }
                 newSubContractorTerms.getField(systemName).setValue(template.getField(systemName).getValue());
@@ -487,7 +507,8 @@ public class ConditionRecordPanel extends Panel
         for (int i = 0; i < numberOfFields; i++) {
             if (template.getBODefinition().getFieldDefinition(i).isInUse() && !template.getBODefinition().getFieldDefinition(i).isReadOnly()) {
                 String systemName = template.getBODefinition().getFieldDefinition(i).getPnName();
-                if ("RefBOStateUserDefined".equals(systemName) || "SystemState".equals(systemName) || "Code".equals(systemName)) {
+                if ("RefBOStateUserDefined".equals(systemName) || "SystemState".equals(systemName) || "Code".equals(systemName) ||
+                    "PivotLifecycleRef".equals(systemName) || "PreviousLifecycleRef".equals(systemName)) {
                     continue;
                 }
                 if ("Name".equals(systemName)) {
@@ -500,7 +521,7 @@ public class ConditionRecordPanel extends Panel
                     continue;
                 }
                 if ("ServiceAgreementRef".equals(systemName)) {
-                    newMaterialTerms.getField(systemName).setValue(primaryKey-1);
+                    newMaterialTerms.getField(systemName).setValue(primaryKey);
                     continue;
                 }
                 newMaterialTerms.getField(systemName).setValue(template.getField(systemName).getValue());
@@ -523,7 +544,8 @@ public class ConditionRecordPanel extends Panel
         for (int i = 0; i < numberOfFields; i++) {
             if (template.getBODefinition().getFieldDefinition(i).isInUse() && !template.getBODefinition().getFieldDefinition(i).isReadOnly()) {
                 String systemName = template.getBODefinition().getFieldDefinition(i).getPnName();
-                if ("RefBOStateUserDefined".equals(systemName) || "SystemState".equals(systemName) || "Code".equals(systemName)) {
+                if ("RefBOStateUserDefined".equals(systemName) || "SystemState".equals(systemName) || "Code".equals(systemName) ||
+                    "PivotLifecycleRef".equals(systemName) || "PreviousLifecycleRef".equals(systemName)) {
                     continue;
                 }
                 if ("Name".equals(systemName)) {
@@ -536,7 +558,7 @@ public class ConditionRecordPanel extends Panel
                     continue;
                 }
                 if ("ServiceAgreementRef".equals(systemName)) {
-                    newTravelTerms.getField(systemName).setValue(primaryKey-1);
+                    newTravelTerms.getField(systemName).setValue(primaryKey);
                     continue;
                 }
                 newTravelTerms.getField(systemName).setValue(template.getField(systemName).getValue());
