@@ -21,6 +21,7 @@ import com.planonsoftware.platform.tsi.action.v3.ITSIActionContext;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -105,8 +106,6 @@ public class ConditionRecordPanel extends Panel
             @Override
             protected void onSubmit(final AjaxRequestTarget target) {
                 try {
-                    
-                    ModalWindow.closeCurrent(target); 
 
                     IBusinessObject template = aTSIActionContext.getDataService().getActionListManager("UsrConditionRecordTemplate").executeRead(Integer.valueOf(conditionRecordModel.getObject().getCode()));
 
@@ -186,8 +185,8 @@ public class ConditionRecordPanel extends Panel
                             ConditionRecordPanel.travelTermMethodQuery.getSearchExpression("ServiceAgreementRef", Operator.EQUAL).setValue(baseServiceAgreement.getPrimaryKey());
                             ConditionRecordPanel.travelTermMethodQueryResults = ConditionRecordPanel.travelTermMethodQuery.execute();
                             while (ConditionRecordPanel.travelTermMethodQueryResults.next()) {
-                                IBusinessObject travelTermMethod = aTSIActionContext.getDataService().getActionListManager("TravelTerms").executeRead(ConditionRecordPanel.travelTermMethodQueryResults.getPrimaryKey());
-                                IBusinessObject newTravelTermMethod = createTravelTerms(aTSIActionContext, travelTermMethod, newBaseServiceAgreement.getReferenceField("PivotLifecycleRef").getValue());
+                                IBusinessObject travelTermMethod = aTSIActionContext.getDataService().getActionListManager("TravelTermMethod").executeRead(ConditionRecordPanel.travelTermMethodQueryResults.getPrimaryKey());
+                                IBusinessObject newTravelTermMethod = createTravelTermMethod(aTSIActionContext, travelTermMethod, newBaseServiceAgreement.getReferenceField("PivotLifecycleRef").getValue());
                                 ConditionRecordPanel.travelTermMethodQueryResults.next();
                             }
                             ConditionRecordPanel.baseServiceAgreementQueryResults.next();
@@ -195,14 +194,14 @@ public class ConditionRecordPanel extends Panel
                         ConditionRecordPanel.queryResults.next();
                     }
 
+                    ModalWindow.closeCurrent(target); 
                 } catch (NumberFormatException | ActionNotFoundException | BusinessException | FieldNotFoundException | ParseException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
-                }
-                               
+                }                               
             }
         };
-
+        
         this.dbQuery = aTSIActionContext.getDataService().getPVDatabaseQuery("ConditionRecordQuery");
         this.dbQuery.getStringSearchExpression("Name", Operator.CONTAINS).addValue(buildingName);
         int count = this.dbQuery.executeCount();
