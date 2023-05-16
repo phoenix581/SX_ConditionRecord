@@ -10,6 +10,7 @@ public class ManHourTermsQuery implements IQueryDefinition
 	public void create(IQueryBuilder aBuilder, IQueryDefinitionContext aContext) {
         aBuilder.addSelectField("Name");
         aBuilder.addSearchField("ServiceAgreementRef");
+        aBuilder.addSearchField("PivotLifecycleRef");
 	}
 
 	@Override

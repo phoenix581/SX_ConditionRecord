@@ -156,11 +156,11 @@ public class ConditionRecordPanel extends Panel
                             ConditionRecordPanel.manHourTermsQuery = aTSIActionContext.getDataService().getPVDatabaseQuery("ManHourTermsQuery");
                             ConditionRecordPanel.manHourTermsQuery.setPageSize(1000);
                             ConditionRecordPanel.manHourTermsQuery.getSearchExpression("ServiceAgreementRef", Operator.EQUAL).setValue(baseServiceAgreement.getPrimaryKey());
+                            ConditionRecordPanel.manHourTermsQuery.getSearchExpression("PivotLifecycleRef", Operator.NULL);
                             ConditionRecordPanel.manHourTermsQueryResults = ConditionRecordPanel.manHourTermsQuery.execute();
                             while (ConditionRecordPanel.manHourTermsQueryResults.next()) {
                                 IBusinessObject manHourTerms = aTSIActionContext.getDataService().getActionListManager("ManHourTerms").executeRead(ConditionRecordPanel.manHourTermsQueryResults.getPrimaryKey());
                                 IBusinessObject newManHourTerms = createManHourTerms(aTSIActionContext, manHourTerms, newBaseServiceAgreement.getReferenceField("PivotLifecycleRef").getValue());
-                                ConditionRecordPanel.manHourTermsQueryResults.next();
                             }
                             ConditionRecordPanel.subContractorTermsQuery = aTSIActionContext.getDataService().getPVDatabaseQuery("SubContractorTermsQuery");
                             ConditionRecordPanel.subContractorTermsQuery.setPageSize(1000);
