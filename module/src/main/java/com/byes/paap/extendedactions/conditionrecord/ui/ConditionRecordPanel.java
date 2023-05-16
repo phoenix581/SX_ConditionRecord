@@ -100,13 +100,22 @@ public class ConditionRecordPanel extends Panel
         feedbackMessage.setOutputMarkupId(true);
         exampleForm.add(feedbackMessage);
 
-        AjaxButton saveButton = new AjaxButton("saveButton") {
+        SingleClickAjaxButton saveButton = new SingleClickAjaxButton("saveButton", exampleForm, true) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onSubmit(final AjaxRequestTarget target) {
+
                 try {
 
+                    ConditionRecordPanel.dbQuery = aTSIActionContext.getDataService().getPVDatabaseQuery("ConditionRecordQuery");
+                    ConditionRecordPanel.dbQuery.getStringSearchExpression("Name", Operator.CONTAINS).addValue(buildingName);
+                    int count = ConditionRecordPanel.dbQuery.executeCount();
+
+                    if (count > 0) {
+                        return;
+                    }
+                    
                     IBusinessObject template = aTSIActionContext.getDataService().getActionListManager("UsrConditionRecordTemplate").executeRead(Integer.valueOf(conditionRecordModel.getObject().getCode()));
 
                     IBusinessObject newCR = createUsrConditionRecord(aTSIActionContext, template, customerPrimaryKey, buildingName);
@@ -260,6 +269,10 @@ public class ConditionRecordPanel extends Panel
                     continue;
                 }
                 if ("CustomerRef".equals(systemName)) {
+                    conditionRecordBO.getField(systemName).setValue(customerPrimaryKey);
+                    continue;
+                }
+                if ("FreeInteger6".equals(systemName)) {
                     conditionRecordBO.getField(systemName).setValue(customerPrimaryKey);
                     continue;
                 }
